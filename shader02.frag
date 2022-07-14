@@ -32,7 +32,17 @@ float fill(float x, float size) {
 float rectSDF(vec2 st, vec2 s) {
 	st = st*2. -1.;
 	return max( abs(st.x/s.x),
-				abs(st.y/s.y) );	
+				abs(st.y/s.y));	
+}
+
+float crossSDF(vec2 st, float s) {
+	vec2 size = vec2(.25, s);
+	return min( rectSDF(st,size.xy),
+				rectSDF(st,size.yx));
+}
+
+float flip(float v, float pct) {
+	return mix(v, 1.-v, pct);
 }
 
 void main (void) {
@@ -90,10 +100,34 @@ void main (void) {
 	// col -= fill(circleSDF(st-offset), .5);
 
 	// 10: The Emperor
-	float sdf = rectSDF(st, vec2(1., .2));
-	col += stroke(sdf, .5, .125);
-	col += fill(sdf, abs(lfo)*.5);
+	//float sdf = rectSDF(st, vec2(1., .2));
+	//col += stroke(sdf, .5, .125);
+	//col += fill(sdf, abs(lfo)*.5);
 
+	// 11: Hierophant
+	//float rect = rectSDF(st, vec2(1.));
+	//col += fill(rect, .5);
+	//float cross = crossSDF(st, 1.);
+	//col *= step(.5, fract(cross*4.));
+		//col *= step(.5, fract(cross*lfo*40.));
+	//col *= step(1., cross);
+	//col += fill(cross, .5);
+	//col += stroke(rect, .65, .05);
+	//col += stroke(rect, .75, .025);
+
+	// 12: The Thower
+	//float rect = rectSDF(st, vec2(.5, 1.));
+	//float diag = (st.x+st.y)*.5;
+	//col.r += flip(fill(rect, .5*lfo), stroke(diag, .6, .01));
+	//col.g += flip(fill(rect, .6-lfo), stroke(diag, .5, .01));
+	//col.b += flip(fill(rect, .7+lfo), stroke(diag, .4, .01));
+	
+	// 13: Merge
+	vec2 offset = vec2(.15, .0);
+	float left = circleSDF(st+offset+vec2(.01,0.));
+	float right = circleSDF(st-offset);
+	col += flip(stroke(left, .5, .05), fill(right, .525));
+	
 	// Debugger:
 	col += vec3(0.,0.7,.5);
 
